@@ -1,80 +1,75 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useForm } from '../hooks/useForm';
 import { clienteAxios } from '../src/config/clientAxios';
 import Swal from 'sweetalert2';
 import { Header } from './Header'
+import { Link } from 'react-router-dom'
+import { useForm } from '../hooks/useForm'
+import { FormEvent, useContext } from 'react';
+import AuthContext from '../src/context/AuthProvider';
+import { AxiosResponse } from 'axios';
 
-interface FormValues {
-  name: string;
-  email: string;
-  password: string;
-  password2: string;
+export interface FormValuesRegister {
+  name : string;
+  email : string;
+  password : string;
+  password2 : string;
 }
 
-export const Register: React.FC = () => {
-  const [alert, setAlert] = useState<{ msg: string }>({ msg: '' });
-  const [sending, setSending] = useState<boolean>(false);
+const exRegEmail = /^[^@]+@[^@]+\.[a-zA-Z]{2,}/;
 
-  const { formValues, handleInputChange, reset } = useForm<FormValues>({
+
+export const Register = () => {
+
+  const {alert, handleShowAlert} = useContext(AuthContext);
+
+  const { formValues, handleInputChange, reset } = useForm({
     name: '',
     email: '',
     password: '',
     password2: ''
-  });
+  } as FormValuesRegister);
+  
+  const { name, email, password, password2 } = formValues as FormValuesRegister;
 
-  const { name, email, password, password2 } = formValues;
-
-  const handleShowAlert = (msg: string) => {
-    setAlert({ msg });
-    setTimeout(() => {
-      setAlert({ msg: '' });
-    }, 3000);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if ([name, email, password, password2].includes('')) {
-      handleShowAlert('Todos los campos son obligatorios');
-      return;
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+       
+    if ([name, email, password, password2].includes("")) {
+      handleShowAlert("Todos los campos son obligatorios");
+      return null
     }
-
-    const exRegEmail = /^[^@]+@[^@]+\.[a-zA-Z]{2,}/;
     if (!exRegEmail.test(email)) {
-      handleShowAlert('El email tiene un formato inválido');
-      return;
+      handleShowAlert("El email tiene un formato inválido");
+      return null
     }
 
     if (password !== password2) {
-      handleShowAlert('Las contraseñas no coinciden');
-      return;
+      handleShowAlert("Las contraseñas no coinciden");
+      return null
     }
 
     try {
-      setSending(true);
 
-      const { data } = await clienteAxios.post('/register', {
+      const {data} : AxiosResponse = await clienteAxios.post('/register',{
         name,
         email,
         password
       });
-
-      setSending(false);
 
       Swal.fire({
         icon: 'info',
         title: 'Gracias por registrate!',
         text: data.msg
       });
-
-      reset();
+      
+            
+            
     } catch (error) {
-      console.error(error);
-      handleShowAlert(error.response.data.msg);
-      reset();
+        console.log(error);
+        handleShowAlert("error de respuesta");
     }
-  };
+
+    reset()
+  }
 
   return (
     <>

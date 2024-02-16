@@ -1,20 +1,19 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useContext} from 'react'
 import { clienteAxios } from "../src/config/clientAxios"
 import {Link, useParams, useNavigate} from 'react-router-dom'
 import {Alert} from '../components/Alert'
 import Swal from 'sweetalert2'
+import AuthContext from "../src/context/AuthProvider"
+import {Header} from "./Header" 
 
 export const ConfirmAccount = async () => {
   const params = useParams(); 
   const {token} = params;
-  const [alert, setAlert] = useState({});
 
   const navigate = useNavigate();
-  const handleShowAlert = (msg) => {
-    setAlert({ 
-      msg 
-    });
-  }
+
+  const {alert, handleShowAlert} = useContext(AuthContext);
+
   useEffect(() => { 
      
     const confirmAccount = async () => { 
@@ -43,6 +42,8 @@ export const ConfirmAccount = async () => {
 
   return (
     <>
+    <Header />
+    <div>
     {alert.msg && ( 
       <div> 
           <> 
@@ -65,7 +66,6 @@ export const ConfirmAccount = async () => {
       <h1>
         Confirma tu cuenta
       </h1>
-      <div>
       </div>
 
     </>

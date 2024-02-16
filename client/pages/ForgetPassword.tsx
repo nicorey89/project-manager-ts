@@ -1,12 +1,14 @@
-import {useState} from "react"; 
+import {useState, useContext} from "react"; 
 import { clienteAxios } from "../src/config/clientAxios"; 
 import { Link } from "react-router-dom"; 
 import Swal from "sweetalert2";
+import { Header } from "./Header";
+import AuthContext from "../src/context/AuthProvider";
 
 export const ForgetPassword = () => {
 
   const [email, setEmail] = useState(""); 
-  const [alert, setAlert] = useState({});
+  const { handleShowAlert} = useContext(AuthContext);
 
   const handleSubmit = async (e) => { 
     e.preventDefault(); 
@@ -30,23 +32,14 @@ export const ForgetPassword = () => {
   
     } catch (error) { 
       console.error(error); 
-      handleShowAlert(error.response.data.msg); 
+      handleShowAlert("mail invalido"); 
       setEmail("") 
     }
   } 
- 
-  const handleShowAlert = (msg) => { 
-    setAlert({ 
-      msg 
-    }); 
- 
-    setTimeout(() => { 
-      setAlert({});
-    }, 3000); 
-  }
-
   return (
     <> 
+    <Header />
+    <div>
       <h1 > 
         Recupera tu acceso 
       </h1> 
@@ -83,7 +76,8 @@ export const ForgetPassword = () => {
         > 
           ¿Estás registrado? Iniciá sesión 
         </Link> 
-      </nav> 
+      </nav>
+      </div> 
     </>
 
   )

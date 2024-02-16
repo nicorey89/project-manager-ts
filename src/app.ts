@@ -5,24 +5,19 @@ import router from './routes';
 import createHttpError from 'http-errors';
 import cors from 'cors'; 
 
+interface ResponseError extends Error {
+  status: number;
+}
+
 const app: Express = express();
 
-/* const whiteList = [process.env.URL_FRONTEND];
-const corsOptions = { 
-  origin : function(origin : any, callback : any){ 
-    if(whiteList.includes(origin)){ 
-      callback(null, true) 
-    }else { 
-      callback(new Error("Error de Cors")) 
-    } 
-  } 
-}  */
-/* app.use(cors(corsOptions)) */
-app.use(cors());
+const allowedOrigins = ['http://localhost:5173'];
 
-interface ResponseError extends Error {
-    status: number;
-  }
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
+
+app.use(cors(options));
 
 connectDB();
 
@@ -46,3 +41,4 @@ app.use(function(err : ResponseError, req : Request, res : Response, next : Next
 app.listen(process.env.PORT, ()=> {
 console.log(`Server running in https://localhost:${process.env.PORT}`);
 });
+

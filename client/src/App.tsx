@@ -1,25 +1,25 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import {Login} from '../pages/Login'
-import {RecoverPassword} from '../pages/RecoverPassword'
 import {ForgetPassword} from '../pages/ForgetPassword'
 import {Register} from '../pages/Register'
-import {Home} from "../pages/Home"
+import AuthProvider from './context/AuthProvider'
+import { AuthLayout } from "../layouts/AuthLayout"
+import { NotFound } from "../pages/NotFound"
 
-const App: React.FC = () => {
+function App() {
+
   return (
-    <div style={{display: "flex", flexDirection: "column", justifyContent: "flex-start", height: "100vw"}}>
-    <Router>
-      <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/forget-password" element={<ForgetPassword />} />
-          <Route path="/recover-password" element={<RecoverPassword />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-      </Routes>
-    </Router>
-    </div>
-  );
-};
+  <AuthProvider>
+    <Routes>
+      <Route path='/' element={<AuthLayout/>}>
+          <Route index element={<Login/>}/>
+          <Route path='/registrar' element={<Register/>}/>
+          <Route path='*' element={<NotFound/>}></Route>
+          <Route path='olvide-password' element={<ForgetPassword/>}/>
+      </Route>
+    </Routes>
+  </AuthProvider>
+  )
+}
 
-export default App;
+export default App
